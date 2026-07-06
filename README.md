@@ -1,98 +1,205 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+<div align="center">
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# 🐻 Poro Guess API
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+**The backend powering a multi-mode League of Legends guessing game**
 
-## Description
+[![CI](https://github.com/Sencoool/poro-guess-api/actions/workflows/ci.yml/badge.svg)](https://github.com/Sencoool/poro-guess-api/actions/workflows/ci.yml)
+![NestJS](https://img.shields.io/badge/NestJS-v11-E0234E?logo=nestjs)
+![Prisma](https://img.shields.io/badge/Prisma-v7-2D3748?logo=prisma)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+</div>
 
-## Project setup
+---
 
-```bash
-$ npm install
+## 🎮 Overview
+
+**Poro Guess API** is the REST backend for an interactive League of Legends guessing web application. It manages game mechanics, scoring, progressive hint unlocking, and real-time validation across four distinct mini-games:
+
+| Mode | Description |
+|------|-------------|
+| 🏆 **Classic** | Daily champion guessing with dynamic attribute clues — Role, Species, Release Year, with directional comparison arrows |
+| 🧩 **Tile Reveal** | Grid-based image reveal puzzle — a region of the champion splash art is uncovered with each attempt |
+| 🔍 **Traits** | A Fan-Pantae-inspired progressive mystery game — 5 clues are unlocked one by one until the champion is identified |
+| ⚡ **Ability Matcher** | Memory-match card mechanics linking champion skills to their hotkey slots |
+
+---
+
+## 🏗️ Architecture
+
+The project follows **Clean Architecture (Hexagonal)** principles, with strict separation between domain logic, application use cases, and infrastructure concerns.
+
+```
+src/
+├── core/               # Domain layer — entities, interfaces, use cases
+│   └── user/
+├── modules/            # Application layer — NestJS feature modules
+│   └── user/
+├── infrastructure/     # Infrastructure layer — Prisma, repositories, adapters
+│   └── prisma/
+│       ├── prisma.service.ts
+│       └── repositories/
+├── common/             # Shared utilities — filters, interceptors, pipes
+└── generated/          # Prisma-generated client (do not edit)
+    └── prisma/
 ```
 
-## Compile and run the project
+**Key principles applied:**
+- Domain game logic is fully decoupled from persistence and HTTP frameworks
+- Repositories are defined as interfaces in the core layer and implemented in infrastructure
+- Global validation, serialization, and error handling via NestJS pipes/interceptors/filters
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework**: [NestJS](https://nestjs.com/) v11
+- **Language**: TypeScript 5.7
+- **ORM**: [Prisma](https://www.prisma.io/) v7 (with `@prisma/adapter-pg` driver)
+- **Database**: PostgreSQL 16
+- **Validation**: `class-validator` + `class-transformer`
+- **API Docs**: Swagger / OpenAPI (`/api`)
+- **Testing**: Jest (unit) + Supertest (E2E)
+- **CI**: GitHub Actions
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) >= 22
+- [Docker](https://www.docker.com/) (for local PostgreSQL)
+
+### 1. Clone & install
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+git clone https://github.com/Sencoool/poro-guess-api.git
+cd poro-guess-api
+npm install
 ```
 
-## Run tests
+### 2. Configure environment
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+cp .env.example .env
 ```
 
-## Deployment
+Edit `.env` with your values (defaults work out of the box with Docker):
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+```env
+PORT=3000
+NODE_ENV=development
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=poro_guess
+POSTGRES_PORT=5432
+
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/poro_guess?schema=public"
+
+PGADMIN_EMAIL=admin@poroguess.com
+PGADMIN_PASSWORD=admin
+PGADMIN_PORT=5050
+```
+
+### 3. Start the database
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+docker compose up -d
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+This starts:
+- **PostgreSQL 16** on the configured port
+- **pgAdmin 4** at `http://localhost:5050`
 
-## Resources
+### 4. Run migrations & generate client
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+npx prisma migrate dev
+npx prisma generate
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### 5. Start the server
 
-## Support
+```bash
+# Development (watch mode)
+npm run start:dev
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+# Production
+npm run build
+npm run start:prod
+```
 
-## Stay in touch
+The API will be available at:
+- 🚀 **Server**: `http://localhost:3000`
+- 📖 **Swagger UI**: `http://localhost:3000/api`
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+---
 
-## License
+## 🧪 Testing
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+```bash
+# Unit tests
+npm run test
+
+# Unit tests (watch mode)
+npm run test:watch
+
+# Coverage report
+npm run test:cov
+
+# E2E tests
+npm run test:e2e
+```
+
+---
+
+## 🗃️ Database
+
+### Useful Prisma commands
+
+```bash
+# Run migrations (dev)
+npm run prisma:migrate
+
+# Open Prisma Studio
+npm run prisma:studio
+
+# Regenerate Prisma client after schema changes
+npm run prisma:generate
+
+# Seed the database
+npm run prisma:seed
+```
+
+### Schema overview
+
+| Model | Description |
+|-------|-------------|
+| `User` | Player accounts with role-based access (`USER` / `ADMIN`) |
+
+---
+
+## 📁 Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PORT` | `3000` | HTTP server port |
+| `NODE_ENV` | `development` | Runtime environment |
+| `DATABASE_URL` | — | Full PostgreSQL connection string |
+| `POSTGRES_USER` | `postgres` | PostgreSQL username |
+| `POSTGRES_PASSWORD` | `postgres` | PostgreSQL password |
+| `POSTGRES_DB` | `poro_guess` | PostgreSQL database name |
+| `POSTGRES_PORT` | `5432` | PostgreSQL port |
+| `PGADMIN_EMAIL` | — | pgAdmin login email |
+| `PGADMIN_PASSWORD` | — | pgAdmin login password |
+| `PGADMIN_PORT` | `5050` | pgAdmin UI port |
+
+---
+
+## 📜 License
+
+UNLICENSED — private project.
