@@ -1,0 +1,37 @@
+service: poro-guess-api
+
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs22.x
+  region: ap-southeast-1
+  environment:
+    NODE_ENV: production
+    DATABASE_URL: ${env:DATABASE_URL}
+
+package:
+  individually: false
+  patterns:
+    - '!src/**'
+    - '!test/**'
+    - '!.git/**'
+    - 'dist/**'
+    - 'node_modules/**'
+    - 'prisma/**'
+
+functions:
+  main:
+    handler: dist/src/main.handler
+    timeout: 29
+    memorySize: 512
+    events:
+      - http:
+          method: ANY
+          path: /
+          cors: true
+      - http:
+          method: ANY
+          path: '{proxy+}'
+          cors: true

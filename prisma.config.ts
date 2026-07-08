@@ -9,6 +9,8 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    // DIRECT_URL: Supabase direct connection (port 5432) — bypasses PgBouncer.
+    // Required for Prisma Migrate since PgBouncer does not support migration commands.
+    url: process.env["DIRECT_URL"],
   },
 });

@@ -14,7 +14,18 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   public readonly client: PrismaClient;
 
   constructor() {
-    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    const pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      // ── Serverless-friendly pool settings ─────────────────────
+      // Supabase Pooler (PgBouncer) manages the real pool on its side,
+      // so each Lambda instance only needs 1–2 connections at most.
+      max: 2,
+      // Release connections immediately when idle so that Lambda
+      // function instances do not hold open connections between invocations.
+      idleTimeoutMillis: 0,
+      // Fail fast if the pooler is unreachable (cold start timeout guard).
+      connectionTimeoutMillis: 5000,
+    });
     const adapter = new PrismaPg(pool);
     this.client = new PrismaClient({ adapter });
   }
