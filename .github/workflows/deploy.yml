@@ -36,7 +36,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
@@ -69,33 +69,41 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
-        run: npm run build
-
-      - name: Delete dev dependencies
-        run: npm prune --omit=dev
-
       - name: Generate Prisma client
         run: npx prisma generate
 
+      - name: Build
+        run: npm run build
+
+      - name: Bundle for Lambda with esbuild
+        # Bundle all dependencies into a single file to keep package size well under Lambda's 250 MB limit.
+        # bcrypt is kept external because it uses a native binary (.node) that must be deployed as-is.
+        run: |
+          npx esbuild dist/src/main.js \
+            --bundle \
+            --platform=node \
+            --target=node22 \
+            --format=cjs \
+            --outfile=dist/lambda.js \
+            --external:bcrypt \
+            --external:pg-native \
+            --external:@nestjs/microservices \
+            --external:@nestjs/websockets \
+            --external:cache-manager \
+            --external:class-transformer/storage
+
       - name: Install Serverless Framework
         run: npm install -g serverless
-
-      - name: Remove dev plugins from serverless.yml
-        run: |
-          sed -i '/plugins:/d' serverless.yml
-          sed -i '/- serverless-offline/d' serverless.yml
 
       - name: Deploy via Serverless Framework
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: serverless deploy --stage production

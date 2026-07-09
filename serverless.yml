@@ -13,30 +13,14 @@ provider:
 
 package:
   individually: false
-  excludeDevDependencies: true
   patterns:
     - '!**'
-    - 'dist/**'
-
-    # Prisma
-    - 'prisma/schema.prisma'
-    - 'node_modules/.prisma/client/**'
-    - 'node_modules/@prisma/client/**'
-    
-    # Node Modules without dev dependencies
-    - 'node_modules/**'
-    
-    # Cut all dev dependencies modules
-    - '!node_modules/typescript/**'
-    - '!node_modules/@types/**'
-    - '!node_modules/eslint/**'
-    - '!node_modules/prettier/**'
-    - '!node_modules/jest/**'
-    - '!node_modules/.cache/**'
+    - 'dist/lambda.js'
+    - 'node_modules/bcrypt/**'
 
 functions:
   main:
-    handler: dist/src/main.handler
+    handler: dist/lambda.handler
     timeout: 29
     memorySize: 512
     events:
@@ -46,5 +30,5 @@ functions:
           cors: true
       - http:
           method: ANY
-          path: "{proxy+}"
+          path: '{proxy+}'
           cors: true
