@@ -87,6 +87,11 @@ jobs:
       - name: Install Serverless Framework
         run: npm install -g serverless
 
+      - name: Remove dev plugins from serverless.yml
+        run: |
+          sed -i '/plugins:/d' serverless.yml
+          sed -i '/- serverless-offline/d' serverless.yml
+
       - name: Deploy via Serverless Framework
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
