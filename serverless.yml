@@ -13,13 +13,26 @@ provider:
 
 package:
   individually: false
+  excludeDevDependencies: true
   patterns:
-    - '!src/**'
-    - '!test/**'
-    - '!.git/**'
+    - '!**'
     - 'dist/**'
+
+    # Prisma
+    - 'prisma/schema.prisma'
+    - 'node_modules/.prisma/client/**'
+    - 'node_modules/@prisma/client/**'
+    
+    # Node Modules without dev dependencies
     - 'node_modules/**'
-    - 'prisma/**'
+    
+    # Cut all dev dependencies modules
+    - '!node_modules/typescript/**'
+    - '!node_modules/@types/**'
+    - '!node_modules/eslint/**'
+    - '!node_modules/prettier/**'
+    - '!node_modules/jest/**'
+    - '!node_modules/.cache/**'
 
 functions:
   main:
@@ -33,5 +46,5 @@ functions:
           cors: true
       - http:
           method: ANY
-          path: '{proxy+}'
+          path: "{proxy+}"
           cors: true
