@@ -33,10 +33,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node (v22 to match AWS Lambda)
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
@@ -69,20 +69,24 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
         run: npm ci
 
+      - name: Build
+        run: npm run build
+
+      - name: Delete dev dependencies
+        run: npm prune --omit=dev
+
       - name: Generate Prisma client
         run: npx prisma generate
 
-      # ติดตั้ง Serverless Framework
       - name: Install Serverless Framework
         run: npm install -g serverless
 
-      # สั่ง Deploy โดยใช้ค่าจาก GitHub Secrets
       - name: Deploy via Serverless Framework
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
