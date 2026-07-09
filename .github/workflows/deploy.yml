@@ -83,7 +83,6 @@ jobs:
 
       - name: Bundle for Lambda with esbuild
         # Bundle all dependencies into a single file to keep package size well under Lambda's 250 MB limit.
-        # bcrypt is kept external because it uses a native binary (.node) that must be deployed as-is.
         run: |
           npx esbuild dist/src/main.js \
             --bundle \
