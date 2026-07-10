@@ -1,7 +1,7 @@
 // src/core/user/use-cases/update-user.use-case.ts
 
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import {
   USER_REPOSITORY,
 } from '../repositories/user.repository.interface';
