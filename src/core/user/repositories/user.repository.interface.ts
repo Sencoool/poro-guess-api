@@ -1,11 +1,15 @@
 // src/core/user/repositories/user.repository.interface.ts
 
-import { UserEntity } from '../entities/user.entity';
+import { UserEntity, Role, Rank } from '../entities/user.entity';
 
 export interface CreateUserInput {
   email: string;
   username: string;
   password: string;
+  role: Role;
+  isActive: boolean;
+  score: number;
+  rank: Rank;
 }
 
 export interface UpdateUserInput {
@@ -13,6 +17,8 @@ export interface UpdateUserInput {
   username?: string;
   password?: string;
   isActive?: boolean;
+  score?: number;
+  rank?: Rank;
 }
 
 export interface IUserRepository {

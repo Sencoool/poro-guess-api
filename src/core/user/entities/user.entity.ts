@@ -5,6 +5,19 @@ export enum Role {
   ADMIN = 'ADMIN',
 }
 
+export enum Rank {
+  IRON = 'IRON',
+  BRONZE = 'BRONZE',
+  SILVER = 'SILVER',
+  GOLD = 'GOLD',
+  PLATINUM = 'PLATINUM',
+  EMERALD = 'EMERALD',
+  DIAMOND = 'DIAMOND',
+  MASTER = 'MASTER',
+  GRANDMASTER = 'GRANDMASTER',
+  CHALLENGER = 'CHALLENGER',
+}
+
 export class UserEntity {
   id: string;
   email: string;

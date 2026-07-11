@@ -8,7 +8,7 @@ import {
 import type {
   IUserRepository,
 } from '../repositories/user.repository.interface';
-import { UserEntity } from '../entities/user.entity';
+import { UserEntity, Role, Rank } from '../entities/user.entity';
 
 export interface CreateUserCommand {
   email: string;
@@ -37,6 +37,10 @@ export class CreateUserUseCase {
       email: command.email,
       username: command.username,
       password: hashedPassword,
+      role: Role.USER,
+      isActive: true,
+      score: 0,
+      rank: Rank.IRON,
     });
   }
 }
