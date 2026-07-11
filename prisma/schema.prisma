@@ -18,6 +18,56 @@ enum Role {
   ADMIN
 }
 
+enum Rank {
+  IRON
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+  EMERALD
+  DIAMOND
+  MASTER
+  GRANDMASTER
+  CHALLENGER
+}
+
+enum ChampionRole {
+  TOP
+  JUNGLE
+  MID
+  BOT
+  SUPPORT
+}
+
+enum DamageType {
+  PHYSICAL
+  MAGICAL
+}
+
+enum Resource {
+  MANA
+  MANALESS
+  ENERGY
+  RAGE
+  NONE
+}
+
+enum RangeType {
+  MELEE
+  RANGE
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum Mode {
+  CLASSIC
+  JIGSAW
+  TRAITS
+}
+
 // ── Models ───────────────────────────────────────────────────
 
 model User {
@@ -27,8 +77,53 @@ model User {
   password  String
   role      Role     @default(USER)
   isActive  Boolean  @default(true)
+  score     Int      @default(0)
+  rank      Rank     @default(IRON)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([score, rank])
   @@map("users")
+}
+
+model Champion {
+  id              Int              @id @default(autoincrement())
+  name            String           @unique
+  gender          Gender
+  role            ChampionRole
+  damageType      DamageType
+  resource        Resource
+  rangeType       RangeType
+  yearRelease     Int
+  traits          String[]         @default([])
+  iconPath        String
+  splashPath      String[]
+  hint            String
+  dailyChallenges DailyChallenge[]
+  dailyGuesses    DailyGuess[]
+
+  @@map("champions")
+}
+
+model DailyChallenge {
+  id           Int          @id @default(autoincrement())
+  mode         Mode
+  championsId  Int
+  champion     Champion     @relation(fields: [championsId], references: [id])
+  dailyGuesses DailyGuess[]
+
+  @@unique([championsId, mode])
+  @@map("daily_challenges")
+}
+
+model DailyGuess {
+  id               Int             @id @default(autoincrement())
+  guessCount       Int             @default(0)
+  championsId      Int
+  champion         Champion        @relation(fields: [championsId], references: [id])
+  dailyChallengeId Int
+  dailyChallenge   DailyChallenge? @relation(fields: [dailyChallengeId], references: [id]) // Count guess for each mode
+
+  @@unique([dailyChallengeId, championsId])
+  @@map("daily_guesses")
 }
