@@ -107,3 +107,15 @@ jobs:
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY}}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: serverless deploy --stage production
+
+      - name: Production health check
+        run: |
+          http_code=$(curl -o /dev/null -s -w "%{http_code}" "${{ env.SERVERLESS_API_URL }}/health")
+          echo "HTTP Status Code: $http_code"
+          if [ "$http_code" -ne 200 ]; then
+            echo "Health check failed! Aborting..."
+            exit 1
+          else
+            echo "Health check passed"
+          fi
+        
