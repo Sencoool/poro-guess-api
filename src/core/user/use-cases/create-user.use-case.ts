@@ -41,6 +41,9 @@ export class CreateUserUseCase {
       isActive: true,
       score: 0,
       rank: Rank.IRON,
+      streak: 0,
+      lastLogin: new Date(),
+      iconPath: 'https://raw.githubusercontent.com/DotA2-Fans/Icons/main/summoners_rift/icons/poro.png',
     });
   }
 }

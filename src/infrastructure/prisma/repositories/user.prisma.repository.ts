@@ -24,6 +24,9 @@ export class UserPrismaRepository implements IUserRepository {
       password: prismaUser.password,
       role: prismaUser.role as Role,
       isActive: prismaUser.isActive,
+      streak: prismaUser.streak,
+      lastLogin: prismaUser.lastLogin,
+      iconPath: prismaUser.iconPath,
       createdAt: prismaUser.createdAt,
       updatedAt: prismaUser.updatedAt,
     });

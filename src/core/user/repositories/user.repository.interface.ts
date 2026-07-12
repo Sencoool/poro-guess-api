@@ -10,6 +10,9 @@ export interface CreateUserInput {
   isActive: boolean;
   score: number;
   rank: Rank;
+  streak: number;
+  lastLogin: Date;
+  iconPath: string;
 }
 
 export interface UpdateUserInput {
@@ -19,6 +22,9 @@ export interface UpdateUserInput {
   isActive?: boolean;
   score?: number;
   rank?: Rank;
+  streak?: number;
+  lastLogin?: Date;
+  iconPath?: string;
 }
 
 export interface IUserRepository {

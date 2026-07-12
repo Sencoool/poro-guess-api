@@ -25,6 +25,9 @@ export class UserEntity {
   password: string;
   role: Role;
   isActive: boolean;
+  streak: number;
+  lastLogin: Date;
+  iconPath: string;
   createdAt: Date;
   updatedAt: Date;
 

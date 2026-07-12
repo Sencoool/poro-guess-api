@@ -11,7 +11,6 @@ import {
   IsBoolean,
   IsNumber,
   IsDate,
-  IsOptional,
 } from 'class-validator';
 import { Rank, Role } from 'src/core/user/entities/user.entity';
 
