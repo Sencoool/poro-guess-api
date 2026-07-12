@@ -29,5 +29,6 @@ import { CHAMPION_REPOSITORY } from '../../core/champion/repositories/champion.r
     UpdateChampionUseCase,
     DeleteChampionUseCase,
   ],
+  exports: [CHAMPION_REPOSITORY],
 })
 export class ChampionModule {}

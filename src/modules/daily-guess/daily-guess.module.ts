@@ -25,5 +25,6 @@ import { DAILY_GUESS_REPOSITORY } from '../../core/daily-guess/repositories/dail
     UpdateDailyGuessUseCase,
     DeleteDailyGuessUseCase,
   ],
+  exports: [DAILY_GUESS_REPOSITORY],
 })
 export class DailyGuessModule {}

@@ -14,6 +14,8 @@ describe('DeleteDailyGuessUseCase', () => {
       findById: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      resetAllGuessCounts: jest.fn(),
+      deleteAll: jest.fn(),
     };
     useCase = new DeleteDailyGuessUseCase(mockDailyGuessRepository);
   });

@@ -14,6 +14,7 @@ describe('FindDailyChallengeByIdUseCase', () => {
       findById: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      deleteAll: jest.fn(),
     };
     useCase = new FindDailyChallengeByIdUseCase(mockDailyChallengeRepository);
   });

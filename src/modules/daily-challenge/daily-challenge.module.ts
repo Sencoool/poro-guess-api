@@ -12,7 +12,12 @@ import { DeleteDailyChallengeUseCase } from '../../core/daily-challenge/use-case
 import { DailyChallengePrismaRepository } from '../../infrastructure/prisma/repositories/daily-challenge.prisma.repository';
 import { DAILY_CHALLENGE_REPOSITORY } from '../../core/daily-challenge/repositories/daily-challenge.repository.interface';
 
+import { RandomizeDailyChallengesUseCase } from '../../core/daily-challenge/use-cases/randomize-daily-challenges.use-case';
+import { DailyGuessModule } from '../daily-guess/daily-guess.module';
+import { ChampionModule } from '../champion/champion.module';
+
 @Module({
+  imports: [DailyGuessModule, ChampionModule],
   controllers: [DailyChallengeController],
   providers: [
     {
@@ -24,6 +29,8 @@ import { DAILY_CHALLENGE_REPOSITORY } from '../../core/daily-challenge/repositor
     FindDailyChallengeByIdUseCase,
     UpdateDailyChallengeUseCase,
     DeleteDailyChallengeUseCase,
+    RandomizeDailyChallengesUseCase,
   ],
+  exports: [RandomizeDailyChallengesUseCase],
 })
 export class DailyChallengeModule {}

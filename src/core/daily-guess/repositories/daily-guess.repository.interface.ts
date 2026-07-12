@@ -20,6 +20,8 @@ export interface IDailyGuessRepository {
   findById(id: number): Promise<DailyGuessEntity | null>;
   update(id: number, data: UpdateDailyGuessInput): Promise<DailyGuessEntity>;
   delete(id: number): Promise<void>;
+  deleteAll(): Promise<number>;
+  resetAllGuessCounts(): Promise<number>;
 }
 
 export const DAILY_GUESS_REPOSITORY = Symbol('IDailyGuessRepository');

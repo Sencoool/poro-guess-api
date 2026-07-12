@@ -52,4 +52,18 @@ export class DailyGuessPrismaRepository implements IDailyGuessRepository {
   async delete(id: number): Promise<void> {
     await this.prisma.client.dailyGuess.delete({ where: { id } });
   }
+
+  async deleteAll(): Promise<number> {
+    const result = await this.prisma.client.dailyGuess.deleteMany();
+    return result.count;
+  }
+
+  async resetAllGuessCounts(): Promise<number> {
+    const result = await this.prisma.client.dailyGuess.updateMany({
+      data: {
+        guessCount: 0,
+      },
+    });
+    return result.count;
+  }
 }

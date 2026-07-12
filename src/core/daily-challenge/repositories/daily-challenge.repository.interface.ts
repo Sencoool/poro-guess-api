@@ -18,6 +18,7 @@ export interface IDailyChallengeRepository {
   findById(id: number): Promise<DailyChallengeEntity | null>;
   update(id: number, data: UpdateDailyChallengeInput): Promise<DailyChallengeEntity>;
   delete(id: number): Promise<void>;
+  deleteAll(): Promise<number>;
 }
 
 export const DAILY_CHALLENGE_REPOSITORY = Symbol('IDailyChallengeRepository');

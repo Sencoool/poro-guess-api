@@ -51,4 +51,9 @@ export class DailyChallengePrismaRepository implements IDailyChallengeRepository
   async delete(id: number): Promise<void> {
     await this.prisma.client.dailyChallenge.delete({ where: { id } });
   }
+
+  async deleteAll(): Promise<number> {
+    const result = await this.prisma.client.dailyChallenge.deleteMany();
+    return result.count;
+  }
 }
