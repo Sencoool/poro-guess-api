@@ -7,7 +7,13 @@ import {
   MinLength,
   MaxLength,
   Matches,
+  IsEnum,
+  IsBoolean,
+  IsNumber,
+  IsDate,
+  IsOptional,
 } from 'class-validator';
+import { Rank, Role } from 'src/core/user/entities/user.entity';
 
 export class CreateUserDto {
   @ApiProperty({
@@ -39,4 +45,55 @@ export class CreateUserDto {
   @IsString()
   @MinLength(8, { message: 'password must be at least 8 characters' })
   password: string;
+
+  @ApiProperty({
+    example: 'USER',
+    description: 'Role of the user',
+    enum: Role,
+  })
+  @IsEnum(Role)
+  role: Role;
+
+  @ApiProperty({
+    example: true,
+    description: 'Activate or deactivate the account',
+  })
+  @IsBoolean()
+  isActive: boolean;
+
+  @ApiProperty({
+    example: 0,
+    description: 'Score of the user',
+  })
+  @IsNumber()
+  score: number;
+
+  @ApiProperty({
+    example: 'IRON',
+    description: 'Rank of the user',
+    enum: Rank,
+  })
+  @IsEnum(Rank)
+  rank: Rank;
+
+  @ApiProperty({
+    example: 0,
+    description: 'Streak of the user',
+  })
+  @IsNumber()
+  streak: number;
+
+  @ApiProperty({
+    example: '2022-01-01',
+    description: 'Last login of the user',
+  })
+  @IsDate()
+  lastLogin: Date;
+
+  @ApiProperty({
+    example: 'path/to/icon.png',
+    description: 'Path to the user icon',
+  })
+  @IsString()
+  iconPath: string;
 }
