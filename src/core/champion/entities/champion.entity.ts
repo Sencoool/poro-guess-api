@@ -10,7 +10,7 @@ export enum ChampionRole {
 
 export enum DamageType {
   PHYSICAL = 'PHYSICAL',
-  MAGICAL = 'MAGICAL'
+  MAGIC = 'MAGIC'
 }
 
 export enum Resource {

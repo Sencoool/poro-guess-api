@@ -34,6 +34,7 @@ export interface IChampionRepository {
   create(data: CreateChampionInput): Promise<ChampionEntity>;
   findAll(): Promise<ChampionEntity[]>;
   findById(id: number): Promise<ChampionEntity | null>;
+  findByName(name: string): Promise<ChampionEntity | null>;
   update(id: number, data: UpdateChampionInput): Promise<ChampionEntity>;
   delete(id: number): Promise<void>;
 }

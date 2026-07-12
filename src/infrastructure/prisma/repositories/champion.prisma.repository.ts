@@ -52,6 +52,11 @@ export class ChampionPrismaRepository implements IChampionRepository {
     return champion ? this.toEntity(champion) : null;
   }
 
+  async findByName(name: string): Promise<ChampionEntity | null> {
+    const champion = await this.prisma.client.champion.findUnique({ where: { name } });
+    return champion ? this.toEntity(champion) : null;
+  }
+
   async update(id: number, data: UpdateChampionInput): Promise<ChampionEntity> {
     const champion = await this.prisma.client.champion.update({ where: { id }, data });
     return this.toEntity(champion);

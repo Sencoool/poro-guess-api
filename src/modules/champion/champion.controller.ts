@@ -26,6 +26,7 @@ import { FindAllChampionsUseCase } from '../../core/champion/use-cases/find-all-
 import { FindChampionByIdUseCase } from '../../core/champion/use-cases/find-champion-by-id.use-case';
 import { UpdateChampionUseCase } from '../../core/champion/use-cases/update-champion.use-case';
 import { DeleteChampionUseCase } from '../../core/champion/use-cases/delete-champion.use-case';
+import { FindChampionByNameUseCase } from '../../core/champion/use-cases/find-champion-by-name.use-case';
 
 import { CreateChampionDto } from './dto/create-champion.dto';
 import { UpdateChampionDto } from './dto/update-champion.dto';
@@ -40,9 +41,10 @@ export class ChampionController {
     private readonly findChampionByIdUseCase: FindChampionByIdUseCase,
     private readonly updateChampionUseCase: UpdateChampionUseCase,
     private readonly deleteChampionUseCase: DeleteChampionUseCase,
+    private readonly findChampionByNameUseCase: FindChampionByNameUseCase,
   ) {}
 
-  // ── POST /users ─────────────────────────────────────────────
+  // ── POST /champions ─────────────────────────────────────────────
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -53,7 +55,7 @@ export class ChampionController {
     return new ChampionResponse(champion);
   }
 
-  // ── GET /users ──────────────────────────────────────────────
+  // ── GET /champions ──────────────────────────────────────────────
 
   @Get()
   @ApiOperation({ summary: 'Retrieve all champions' })
@@ -63,20 +65,33 @@ export class ChampionController {
     return champions.map((c) => new ChampionResponse(c));
   }
 
-  // ── GET /users/:id ──────────────────────────────────────────
+  // ── GET /champions/:id ──────────────────────────────────────────
 
   @Get(':id')
   @ApiOperation({ summary: 'Retrieve a champion by ID' })
   @ApiOkResponse({ type: ChampionResponse, description: 'Champion found' })
   @ApiNotFoundResponse({ description: 'Champion not found' })
-  async findOne(
+  async findById(
     @Param('id') id: number,
   ): Promise<ChampionResponse> {
     const champion = await this.findChampionByIdUseCase.execute(id);
     return new ChampionResponse(champion);
   }
 
-  // ── PATCH /users/:id ────────────────────────────────────────
+  // ── GET /champions/:name ──────────────────────────────────────────
+
+  @Get('name/:name')
+  @ApiOperation({ summary: 'Retrieve a champion by name' })
+  @ApiOkResponse({ type: ChampionResponse, description: 'Champion found' })
+  @ApiNotFoundResponse({ description: 'Champion not found' })
+  async findByName(
+    @Param('name') name: string,
+  ): Promise<ChampionResponse> {
+    const champion = await this.findChampionByNameUseCase.execute(name);
+    return new ChampionResponse(champion);
+  }
+
+  // ── PATCH /champions/:id ────────────────────────────────────────
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a champion' })
@@ -90,7 +105,7 @@ export class ChampionController {
     return new ChampionResponse(champion);
   }
 
-  // ── DELETE /users/:id ───────────────────────────────────────
+  // ── DELETE /champions/:id ───────────────────────────────────────
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)

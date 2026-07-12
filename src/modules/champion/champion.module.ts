@@ -8,6 +8,7 @@ import { FindAllChampionsUseCase } from '../../core/champion/use-cases/find-all-
 import { FindChampionByIdUseCase } from '../../core/champion/use-cases/find-champion-by-id.use-case';
 import { UpdateChampionUseCase } from '../../core/champion/use-cases/update-champion.use-case';
 import { DeleteChampionUseCase } from '../../core/champion/use-cases/delete-champion.use-case';
+import { FindChampionByNameUseCase } from '../../core/champion/use-cases/find-champion-by-name.use-case';
 
 import { ChampionPrismaRepository } from '../../infrastructure/prisma/repositories/champion.prisma.repository';
 import { CHAMPION_REPOSITORY } from '../../core/champion/repositories/champion.repository.interface';
@@ -24,6 +25,7 @@ import { CHAMPION_REPOSITORY } from '../../core/champion/repositories/champion.r
     CreateChampionUseCase,
     FindAllChampionsUseCase,
     FindChampionByIdUseCase,
+    FindChampionByNameUseCase,
     UpdateChampionUseCase,
     DeleteChampionUseCase,
   ],

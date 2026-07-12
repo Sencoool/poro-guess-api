@@ -41,7 +41,7 @@ enum ChampionRole {
 
 enum DamageType {
   PHYSICAL
-  MAGICAL
+  MAGIC
 }
 
 enum Resource {
