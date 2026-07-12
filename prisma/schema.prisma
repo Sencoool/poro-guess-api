@@ -79,10 +79,14 @@ model User {
   isActive  Boolean  @default(true)
   score     Int      @default(0)
   rank      Rank     @default(IRON)
+  streak    Int      @default(0)
+  lastLogin DateTime @default(now())
+  iconPath  String
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([score, rank])
+  @@index([score, rank, streak])
   @@map("users")
 }
 
