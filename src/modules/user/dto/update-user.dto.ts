@@ -3,7 +3,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
-  IsDate,
   IsEmail,
   IsEnum,
   IsNumber,
@@ -12,6 +11,7 @@ import {
   Matches,
   MaxLength,
   MinLength,
+  IsDateString,
 } from 'class-validator';
 import { Rank, Role } from 'src/core/user/entities/user.entity';
 
@@ -47,53 +47,60 @@ export class UpdateUserDto {
   password?: string;
 
   @ApiPropertyOptional({
-      example: 'USER',
-      description: 'Role of the user',
-      enum: Role,
-    })
-    @IsEnum(Role)
-    role: Role;
-  
-    @ApiPropertyOptional({
-      example: true,
-      description: 'Activate or deactivate the account',
-    })
-    @IsBoolean()
-    isActive: boolean;
-  
-    @ApiPropertyOptional({
-      example: 0,
-      description: 'Score of the user',
-    })
-    @IsNumber()
-    score: number;
-  
-    @ApiPropertyOptional({
-      example: 'IRON',
-      description: 'Rank of the user',
-      enum: Rank,
-    })
-    @IsEnum(Rank)
-    rank: Rank;
-  
-    @ApiPropertyOptional({
-      example: 0,
-      description: 'Streak of the user',
-    })
-    @IsNumber()
-    streak: number;
-  
-    @ApiPropertyOptional({
-      example: '2022-01-01',
-      description: 'Last login of the user',
-    })
-    @IsDate()
-    lastLogin: Date;
-  
-    @ApiPropertyOptional({
-      example: 'path/to/icon.png',
-      description: 'Path to the user icon',
-    })
-    @IsString()
-    iconPath: string;
+    example: 'USER',
+    description: 'Role of the user',
+    enum: Role,
+  })
+  @IsOptional()
+  @IsEnum(Role)
+  role?: Role;
+
+  @ApiPropertyOptional({
+    example: true,
+    description: 'Activate or deactivate the account',
+  })
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
+
+  @ApiPropertyOptional({
+    example: 0,
+    description: 'Score of the user',
+  })
+  @IsOptional()
+  @IsNumber()
+  score?: number;
+
+  @ApiPropertyOptional({
+    example: 'IRON',
+    description: 'Rank of the user',
+    enum: Rank,
+  })
+  @IsOptional()
+  @IsEnum(Rank)
+  rank?: Rank;
+
+  @ApiPropertyOptional({
+    example: 0,
+    description: 'Streak of the user',
+  })
+  @IsOptional()
+  @IsNumber()
+  streak?: number;
+
+  @ApiPropertyOptional({
+    example: '2022-01-01',
+    description: 'Last login of the user',
+  })
+  @IsOptional()
+  @IsDateString()
+  lastLogin?: Date;
+
+  @ApiPropertyOptional({
+    example: 'path/to/icon.png',
+    description: 'Path to the user icon',
+  })
+  @IsOptional()
+  @IsString()
+  iconPath?: string;
 }

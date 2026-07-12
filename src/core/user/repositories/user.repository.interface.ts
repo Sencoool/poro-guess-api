@@ -30,6 +30,7 @@ export interface UpdateUserInput {
 export interface IUserRepository {
   create(data: CreateUserInput): Promise<UserEntity>;
   findAll(): Promise<UserEntity[]>;
+  findTop500Users(page?: number): Promise<UserEntity[]>;
   findById(id: string): Promise<UserEntity | null>;
   findByEmail(email: string): Promise<UserEntity | null>;
   update(id: string, data: UpdateUserInput): Promise<UserEntity>;

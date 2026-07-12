@@ -25,6 +25,8 @@ export class UserEntity {
   password: string;
   role: Role;
   isActive: boolean;
+  score: number;
+  rank: Rank;
   streak: number;
   lastLogin: Date;
   iconPath: string;

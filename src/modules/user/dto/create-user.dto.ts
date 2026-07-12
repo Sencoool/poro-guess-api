@@ -10,7 +10,7 @@ import {
   IsEnum,
   IsBoolean,
   IsNumber,
-  IsDate,
+  IsDateString,
 } from 'class-validator';
 import { Rank, Role } from 'src/core/user/entities/user.entity';
 
@@ -86,7 +86,7 @@ export class CreateUserDto {
     example: '2022-01-01',
     description: 'Last login of the user',
   })
-  @IsDate()
+  @IsDateString()
   lastLogin: Date;
 
   @ApiProperty({
