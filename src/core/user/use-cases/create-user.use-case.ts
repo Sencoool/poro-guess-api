@@ -38,6 +38,7 @@ export class CreateUserUseCase {
       username: command.username,
       password: hashedPassword,
       role: Role.USER,
+      isGuest: false,
       isActive: true,
       score: 0,
       rank: Rank.IRON,

@@ -15,6 +15,7 @@ describe('FindTop500UsersUseCase', () => {
       findByEmail: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      deleteInactiveGuestUsers: jest.fn(),
     };
 
     useCase = new FindTop500UsersUseCase(mockUserRepository);

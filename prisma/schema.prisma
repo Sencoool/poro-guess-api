@@ -72,10 +72,11 @@ enum Mode {
 
 model User {
   id        String   @id @default(uuid())
-  email     String   @unique
+  email     String?  @unique
   username  String   @unique
-  password  String
+  password  String?
   role      Role     @default(USER)
+  isGuest   Boolean  @default(false)
   isActive  Boolean  @default(true)
   score     Int      @default(0)
   rank      Rank     @default(IRON)

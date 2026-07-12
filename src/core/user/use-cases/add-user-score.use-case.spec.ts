@@ -16,6 +16,7 @@ describe('AddUserScoreUseCase', () => {
       findByEmail: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      deleteInactiveGuestUsers: jest.fn(),
     };
     useCase = new AddUserScoreUseCase(mockUserRepository);
   });

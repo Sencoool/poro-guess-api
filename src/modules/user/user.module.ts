@@ -9,6 +9,7 @@ import { FindUserByIdUseCase } from '../../core/user/use-cases/find-user-by-id.u
 import { FindTop500UsersUseCase } from '../../core/user/use-cases/find-top-500-users.use-case';
 import { UpdateUserUseCase } from '../../core/user/use-cases/update-user.use-case';
 import { DeleteUserUseCase } from '../../core/user/use-cases/delete-user.use-case';
+import { DeleteInactiveGuestsUseCase } from '../../core/user/use-cases/delete-inactive-guests.use-case';
 
 import { UserPrismaRepository } from '../../infrastructure/prisma/repositories/user.prisma.repository';
 import { USER_REPOSITORY } from '../../core/user/repositories/user.repository.interface';
@@ -28,6 +29,8 @@ import { USER_REPOSITORY } from '../../core/user/repositories/user.repository.in
     FindUserByIdUseCase,
     UpdateUserUseCase,
     DeleteUserUseCase,
+    DeleteInactiveGuestsUseCase,
   ],
+  exports: [DeleteInactiveGuestsUseCase],
 })
 export class UserModule {}

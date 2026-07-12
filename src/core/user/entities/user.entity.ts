@@ -20,10 +20,11 @@ export enum Rank {
 
 export class UserEntity {
   id: string;
-  email: string;
+  email?: string;
   username: string;
-  password: string;
+  password?: string;
   role: Role;
+  isGuest: boolean;
   isActive: boolean;
   score: number;
   rank: Rank;

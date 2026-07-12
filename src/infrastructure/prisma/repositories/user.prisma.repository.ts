@@ -7,7 +7,7 @@ import {
   IUserRepository,
   UpdateUserInput,
 } from '../../../core/user/repositories/user.repository.interface';
-import { UserEntity, Role } from '../../../core/user/entities/user.entity';
+import { UserEntity, Role, Rank } from '../../../core/user/entities/user.entity';
 import { User as PrismaUser } from '../../../generated/prisma/client';
 
 @Injectable()
@@ -19,11 +19,14 @@ export class UserPrismaRepository implements IUserRepository {
   private toEntity(prismaUser: PrismaUser): UserEntity {
     return new UserEntity({
       id: prismaUser.id,
-      email: prismaUser.email,
+      email: prismaUser.email || undefined,
       username: prismaUser.username,
-      password: prismaUser.password,
+      password: prismaUser.password || undefined,
       role: prismaUser.role as Role,
+      isGuest: prismaUser.isGuest,
       isActive: prismaUser.isActive,
+      score: prismaUser.score,
+      rank: prismaUser.rank as Rank,
       streak: prismaUser.streak,
       lastLogin: prismaUser.lastLogin,
       iconPath: prismaUser.iconPath,
@@ -81,5 +84,21 @@ export class UserPrismaRepository implements IUserRepository {
 
   async delete(id: string): Promise<void> {
     await this.prisma.client.user.delete({ where: { id } });
+  }
+
+  async deleteInactiveGuestUsers(days: number): Promise<number> {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - days);
+
+    const result = await this.prisma.client.user.deleteMany({
+      where: {
+        isGuest: true,
+        lastLogin: {
+          lt: cutoffDate,
+        },
+      },
+    });
+
+    return result.count;
   }
 }

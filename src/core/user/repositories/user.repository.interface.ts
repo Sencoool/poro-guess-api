@@ -3,10 +3,11 @@
 import { UserEntity, Role, Rank } from '../entities/user.entity';
 
 export interface CreateUserInput {
-  email: string;
+  email?: string;
   username: string;
-  password: string;
+  password?: string;
   role: Role;
+  isGuest: boolean;
   isActive: boolean;
   score: number;
   rank: Rank;
@@ -20,6 +21,7 @@ export interface UpdateUserInput {
   username?: string;
   password?: string;
   isActive?: boolean;
+  isGuest?: boolean;
   score?: number;
   rank?: Rank;
   streak?: number;
@@ -35,6 +37,7 @@ export interface IUserRepository {
   findByEmail(email: string): Promise<UserEntity | null>;
   update(id: string, data: UpdateUserInput): Promise<UserEntity>;
   delete(id: string): Promise<void>;
+  deleteInactiveGuestUsers(days: number): Promise<number>;
 }
 
 export const USER_REPOSITORY = Symbol('IUserRepository');
