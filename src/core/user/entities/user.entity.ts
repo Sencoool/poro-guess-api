@@ -23,6 +23,8 @@ export class UserEntity {
   email?: string;
   username: string;
   password?: string;
+  provider?: string;
+  providerId?: string;
   role: Role;
   isGuest: boolean;
   isActive: boolean;

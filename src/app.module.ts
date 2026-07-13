@@ -10,6 +10,7 @@ import { DailyGuessModule } from './modules/daily-guess/daily-guess.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronModule } from './modules/cron/cron.module';
 import { UserProgressModule } from './modules/user-progress/user-progress.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { UserProgressModule } from './modules/user-progress/user-progress.module
     DailyGuessModule,
     CronModule,
     UserProgressModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

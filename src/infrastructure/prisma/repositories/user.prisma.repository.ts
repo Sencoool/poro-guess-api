@@ -22,6 +22,8 @@ export class UserPrismaRepository implements IUserRepository {
       email: prismaUser.email || undefined,
       username: prismaUser.username,
       password: prismaUser.password || undefined,
+      provider: prismaUser.provider || undefined,
+      providerId: prismaUser.providerId || undefined,
       role: prismaUser.role as Role,
       isGuest: prismaUser.isGuest,
       isActive: prismaUser.isActive,
@@ -29,6 +31,7 @@ export class UserPrismaRepository implements IUserRepository {
       rank: prismaUser.rank as Rank,
       streak: prismaUser.streak,
       lastLogin: prismaUser.lastLogin,
+      lastPlayedAt: prismaUser.lastPlayedAt || undefined,
       iconPath: prismaUser.iconPath,
       createdAt: prismaUser.createdAt,
       updatedAt: prismaUser.updatedAt,
@@ -74,6 +77,16 @@ export class UserPrismaRepository implements IUserRepository {
 
   async findByEmail(email: string): Promise<UserEntity | null> {
     const user = await this.prisma.client.user.findUnique({ where: { email } });
+    return user ? this.toEntity(user) : null;
+  }
+
+  async findByUsername(username: string): Promise<UserEntity | null> {
+    const user = await this.prisma.client.user.findUnique({ where: { username } });
+    return user ? this.toEntity(user) : null;
+  }
+
+  async findByProviderId(providerId: string): Promise<UserEntity | null> {
+    const user = await this.prisma.client.user.findUnique({ where: { providerId } });
     return user ? this.toEntity(user) : null;
   }
 

@@ -76,6 +76,8 @@ model User {
   email     String?  @unique
   username  String   @unique
   password  String?
+  provider  String?  // e.g. "google", "facebook"
+  providerId String? @unique
   role      Role     @default(USER)
   isGuest   Boolean  @default(false)
   isActive  Boolean  @default(true)
