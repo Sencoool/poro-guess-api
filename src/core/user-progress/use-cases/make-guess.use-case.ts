@@ -10,6 +10,7 @@ import type { IChampionRepository } from '../../champion/repositories/champion.r
 import { UserDailyProgressEntity } from '../entities/user-progress.entity';
 import { compareChampions } from '../utils/comparison.util';
 import { ChampionGuessResult } from '../types';
+import { ChampionEntity } from '../../champion/entities/champion.entity';
 
 export interface MakeGuessCommand {
   userId: string;
@@ -45,13 +46,19 @@ export class MakeGuessUseCase {
     const { userId, dailyChallengeId, championId, moves, timeElapsed, isWon } = command;
 
     const challenge = await this.dailyChallengeRepository.findById(dailyChallengeId);
-    if (!challenge || challenge.championsId === null) {
+    if (!challenge) {
       throw new NotFoundException('Daily challenge not found or invalid');
     }
 
-    const targetChampion = await this.championRepository.findById(challenge.championsId as number);
-    if (!targetChampion) {
-      throw new NotFoundException('Target champion not found');
+    let targetChampion: ChampionEntity | null = null;
+    if (challenge.mode !== 'MATCHER') {
+      if (challenge.championsId == null) {
+        throw new NotFoundException('Daily challenge not found or invalid');
+      }
+      targetChampion = await this.championRepository.findById(challenge.championsId);
+      if (!targetChampion) {
+        throw new NotFoundException('Target champion not found');
+      }
     }
 
     let progress = await this.userProgressRepository.findByUserAndChallenge(userId, dailyChallengeId);
@@ -99,25 +106,27 @@ export class MakeGuessUseCase {
 
     // Build the guess history with comparisons
     const guesses: ChampionGuessResult[] = [];
-    for (const id of updatedGuessedChampions) {
-      const guessedChamp = await this.championRepository.findById(id);
-      if (guessedChamp) {
-        guesses.push({
-          champion: guessedChamp.toPublic(),
-          comparison: compareChampions(guessedChamp, targetChampion)
-        });
+    if (targetChampion) {
+      for (const id of updatedGuessedChampions) {
+        const guessedChamp = await this.championRepository.findById(id);
+        if (guessedChamp) {
+          guesses.push({
+            champion: guessedChamp.toPublic(),
+            comparison: compareChampions(guessedChamp, targetChampion)
+          });
+        }
       }
     }
 
     // Reveal hint if they have guessed 3 or more times
     let hint: string | undefined = undefined;
-    if (updatedGuessedChampions.length >= 3 || isCorrect) {
+    if (targetChampion && (updatedGuessedChampions.length >= 3 || isCorrect)) {
       hint = targetChampion.hint;
     }
 
     // Traits mode logic: unlock hints based on guesses
     let traits: string[] | undefined = undefined;
-    if (challenge.mode === 'TRAITS') {
+    if (challenge.mode === 'TRAITS' && targetChampion) {
       const hintsToReveal = isCorrect ? 5 : Math.min(5, updatedGuessedChampions.length + 1);
       traits = targetChampion.traits.slice(0, hintsToReveal);
     }
@@ -127,7 +136,7 @@ export class MakeGuessUseCase {
       guesses,
       hint,
       traits,
-      targetChampionId: isCorrect ? targetChampion.id : undefined,
+      targetChampionId: isCorrect && targetChampion ? targetChampion.id : undefined,
     };
   }
 

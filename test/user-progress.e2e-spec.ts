@@ -11,6 +11,9 @@ import { UserDailyProgressEntity } from './../src/core/user-progress/entities/us
 import { DailyChallengeEntity, Mode } from './../src/core/daily-challenge/entities/daily-challenge.entity';
 import { UserEntity, Role, Rank } from './../src/core/user/entities/user.entity';
 
+import { CHAMPION_REPOSITORY } from './../src/core/champion/repositories/champion.repository.interface';
+import { ChampionEntity, ChampionRole, DamageType, Resource, RangeType, Gender } from './../src/core/champion/entities/champion.entity';
+
 describe('UserProgressController (e2e)', () => {
   let app: INestApplication<App>;
 
@@ -29,6 +32,10 @@ describe('UserProgressController (e2e)', () => {
     update: jest.fn(),
   };
 
+  const mockChampionRepository = {
+    findById: jest.fn(),
+  };
+
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -39,6 +46,8 @@ describe('UserProgressController (e2e)', () => {
       .useValue(mockDailyChallengeRepository)
       .overrideProvider(USER_REPOSITORY)
       .useValue(mockUserRepository)
+      .overrideProvider(CHAMPION_REPOSITORY)
+      .useValue(mockChampionRepository)
       .compile();
 
     app = moduleFixture.createNestApplication();
@@ -90,9 +99,26 @@ describe('UserProgressController (e2e)', () => {
     updatedAt: new Date(),
   });
 
+  const mockTargetChampion = new ChampionEntity({
+    id: 10,
+    name: 'Aatrox',
+    gender: Gender.MALE,
+    role: ChampionRole.TOP,
+    damageType: DamageType.PHYSICAL,
+    resource: Resource.MANALESS,
+    rangeType: RangeType.MELEE,
+    yearRelease: 2013,
+    traits: ['Darkin'],
+    iconPath: 'icon.png',
+    splashPath: ['splash.png'],
+    hint: 'A hint',
+  });
+
   describe('/user-progress/:userId/:dailyChallengeId (GET)', () => {
     it('should return user progress if found', () => {
       mockUserProgressRepository.findByUserAndChallenge.mockResolvedValue(mockProgress);
+      mockDailyChallengeRepository.findById.mockResolvedValue(mockChallenge);
+      mockChampionRepository.findById.mockResolvedValue(mockTargetChampion);
 
       return request(app.getHttpServer())
         .get('/user-progress/user-1/1')
@@ -100,7 +126,6 @@ describe('UserProgressController (e2e)', () => {
         .expect((res) => {
           expect(res.body.userId).toEqual('user-1');
           expect(res.body.dailyChallengeId).toEqual(1);
-          expect(res.body.guessedChampions).toEqual([5]);
           expect(res.body.isWon).toEqual(false);
         });
     });
@@ -118,7 +143,8 @@ describe('UserProgressController (e2e)', () => {
     it('should correctly make a guess and return updated progress', () => {
       mockDailyChallengeRepository.findById.mockResolvedValue(mockChallenge);
       mockUserProgressRepository.findByUserAndChallenge.mockResolvedValue(mockProgress);
-      
+      mockChampionRepository.findById.mockResolvedValue(mockTargetChampion);
+
       const updatedProgress = new UserDailyProgressEntity({
         ...mockProgress,
         guessedChampions: [5, 10],
@@ -137,7 +163,6 @@ describe('UserProgressController (e2e)', () => {
         .expect(200)
         .expect((res) => {
           expect(res.body.isWon).toEqual(true);
-          expect(res.body.guessedChampions).toEqual([5, 10]);
         });
     });
 

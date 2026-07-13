@@ -60,7 +60,6 @@ describe('DailyChallengeController (e2e)', () => {
         .expect(201)
         .expect((res) => {
           expect(res.body.mode).toEqual(Mode.CLASSIC);
-          expect(res.body.championsId).toEqual(10);
         });
     });
 

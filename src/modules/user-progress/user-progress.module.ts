@@ -9,6 +9,8 @@ import { DAILY_CHALLENGE_REPOSITORY } from '../../core/daily-challenge/repositor
 import { DailyChallengePrismaRepository } from '../../infrastructure/prisma/repositories/daily-challenge.prisma.repository';
 import { USER_REPOSITORY } from '../../core/user/repositories/user.repository.interface';
 import { UserPrismaRepository } from '../../infrastructure/prisma/repositories/user.prisma.repository';
+import { CHAMPION_REPOSITORY } from '../../core/champion/repositories/champion.repository.interface';
+import { ChampionPrismaRepository } from '../../infrastructure/prisma/repositories/champion.prisma.repository';
 
 @Module({
   controllers: [UserProgressController],
@@ -25,6 +27,10 @@ import { UserPrismaRepository } from '../../infrastructure/prisma/repositories/u
     {
       provide: USER_REPOSITORY,
       useClass: UserPrismaRepository,
+    },
+    {
+      provide: CHAMPION_REPOSITORY,
+      useClass: ChampionPrismaRepository,
     },
     GetUserProgressUseCase,
     MakeGuessUseCase,
