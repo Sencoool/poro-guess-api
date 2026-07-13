@@ -30,6 +30,7 @@ export class UserEntity {
   rank: Rank;
   streak: number;
   lastLogin: Date;
+  lastPlayedAt?: Date;
   iconPath: string;
   createdAt: Date;
   updatedAt: Date;

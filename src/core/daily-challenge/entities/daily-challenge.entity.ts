@@ -4,14 +4,19 @@ export enum Mode {
   CLASSIC = 'CLASSIC',
   JIGSAW = 'JIGSAW',
   TRAITS = 'TRAITS',
+  MATCHER = 'MATCHER',
 }
 
 export class DailyChallengeEntity {
   id: number;
   mode: Mode;
-  championsId: number;
+  championsId?: number;
+  matcherChampions: number[];
 
   constructor(partial: Partial<DailyChallengeEntity>) {
     Object.assign(this, partial);
+    if (!this.matcherChampions) {
+      this.matcherChampions = [];
+    }
   }
 }

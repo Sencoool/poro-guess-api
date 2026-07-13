@@ -9,6 +9,7 @@ import { DailyChallengeModule } from './modules/daily-challenge/daily-challenge.
 import { DailyGuessModule } from './modules/daily-guess/daily-guess.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronModule } from './modules/cron/cron.module';
+import { UserProgressModule } from './modules/user-progress/user-progress.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CronModule } from './modules/cron/cron.module';
     DailyChallengeModule,
     DailyGuessModule,
     CronModule,
+    UserProgressModule,
   ],
   controllers: [AppController],
   providers: [AppService],

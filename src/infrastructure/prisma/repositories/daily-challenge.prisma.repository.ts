@@ -20,7 +20,8 @@ export class DailyChallengePrismaRepository implements IDailyChallengeRepository
     return new DailyChallengeEntity({
       id: prismaDailyChallenge.id,
       mode: prismaDailyChallenge.mode as Mode,
-      championsId: prismaDailyChallenge.championsId,
+      championsId: prismaDailyChallenge.championsId ?? undefined,
+      matcherChampions: prismaDailyChallenge.matcherChampions,
     });
   }
 

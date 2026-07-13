@@ -4,12 +4,14 @@ import { DailyChallengeEntity, Mode } from '../entities/daily-challenge.entity';
 
 export interface CreateDailyChallengeInput {
   mode: Mode;
-  championsId: number;
+  championsId?: number;
+  matcherChampions?: number[];
 }
 
 export interface UpdateDailyChallengeInput {
   mode?: Mode;
   championsId?: number;
+  matcherChampions?: number[];
 }
 
 export interface IDailyChallengeRepository {

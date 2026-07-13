@@ -69,7 +69,7 @@ describe('RandomizeDailyChallengesUseCase', () => {
   });
 
   describe('execute', () => {
-    it('should throw InternalServerErrorException if there are less than 3 champions', async () => {
+    it('should throw InternalServerErrorException if there are less than 19 champions', async () => {
       mockChampionRepository.findAll.mockResolvedValue([createMockChampion(1), createMockChampion(2)]);
 
       await expect(useCase.execute()).rejects.toThrow(InternalServerErrorException);
@@ -78,14 +78,8 @@ describe('RandomizeDailyChallengesUseCase', () => {
       expect(mockDailyChallengeRepository.deleteAll).not.toHaveBeenCalled();
     });
 
-    it('should delete old records and create 3 new daily challenges with distinct random champions', async () => {
-      const allChampions = [
-        createMockChampion(1),
-        createMockChampion(2),
-        createMockChampion(3),
-        createMockChampion(4),
-        createMockChampion(5),
-      ];
+    it('should delete old records and create 4 new daily challenges', async () => {
+      const allChampions = Array.from({ length: 25 }, (_, i) => createMockChampion(i + 1));
       mockChampionRepository.findAll.mockResolvedValue(allChampions);
       mockDailyGuessRepository.deleteAll.mockResolvedValue(10);
       mockDailyChallengeRepository.deleteAll.mockResolvedValue(3);
@@ -97,19 +91,20 @@ describe('RandomizeDailyChallengesUseCase', () => {
       expect(mockDailyGuessRepository.deleteAll).toHaveBeenCalled();
       expect(mockDailyChallengeRepository.deleteAll).toHaveBeenCalled();
       
-      expect(mockDailyChallengeRepository.create).toHaveBeenCalledTimes(3);
+      expect(mockDailyChallengeRepository.create).toHaveBeenCalledTimes(4);
       
       const createCalls = mockDailyChallengeRepository.create.mock.calls;
       const modesCreated = createCalls.map(call => call[0].mode);
-      const championIdsSelected = createCalls.map(call => call[0].championsId);
 
       expect(modesCreated).toContain(Mode.CLASSIC);
       expect(modesCreated).toContain(Mode.JIGSAW);
       expect(modesCreated).toContain(Mode.TRAITS);
+      expect(modesCreated).toContain(Mode.MATCHER);
 
-      // Verify that the 3 selected champions are unique
-      const uniqueChampionIds = new Set(championIdsSelected);
-      expect(uniqueChampionIds.size).toBe(3);
+      const matcherCall = createCalls.find(call => call[0].mode === Mode.MATCHER)!;
+      expect(matcherCall).toBeDefined();
+      expect(matcherCall[0].matcherChampions).toBeDefined();
+      expect(matcherCall[0].matcherChampions?.length).toBe(16);
     });
   });
 });

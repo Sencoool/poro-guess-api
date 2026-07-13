@@ -26,6 +26,7 @@ export interface UpdateUserInput {
   rank?: Rank;
   streak?: number;
   lastLogin?: Date;
+  lastPlayedAt?: Date;
   iconPath?: string;
 }
 

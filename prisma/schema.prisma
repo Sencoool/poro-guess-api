@@ -66,6 +66,7 @@ enum Mode {
   CLASSIC
   JIGSAW
   TRAITS
+  MATCHER
 }
 
 // ── Models ───────────────────────────────────────────────────
@@ -82,10 +83,12 @@ model User {
   rank      Rank     @default(IRON)
   streak    Int      @default(0)
   lastLogin DateTime @default(now())
+  lastPlayedAt DateTime?
   iconPath  String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  userDailyProgress UserDailyProgress[]
 
   @@index([score, rank, streak])
   @@map("users")
@@ -113,9 +116,11 @@ model Champion {
 model DailyChallenge {
   id           Int          @id @default(autoincrement())
   mode         Mode
-  championsId  Int
-  champion     Champion     @relation(fields: [championsId], references: [id])
+  championsId  Int?
+  champion     Champion?    @relation(fields: [championsId], references: [id])
+  matcherChampions Int[]    @default([])
   dailyGuesses DailyGuess[]
+  userDailyProgress UserDailyProgress[]
 
   @@unique([championsId, mode])
   @@map("daily_challenges")
@@ -132,3 +137,22 @@ model DailyGuess {
   @@unique([dailyChallengeId, championsId])
   @@map("daily_guesses")
 }
+
+model UserDailyProgress {
+  id               Int            @id @default(autoincrement())
+  userId           String
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dailyChallengeId Int
+  dailyChallenge   DailyChallenge @relation(fields: [dailyChallengeId], references: [id], onDelete: Cascade)
+  guessedChampions Int[]          @default([])
+  isWon            Boolean        @default(false)
+  moves            Int?
+  timeElapsed      Int?
+
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@unique([userId, dailyChallengeId])
+  @@map("user_daily_progress")
+}
+
