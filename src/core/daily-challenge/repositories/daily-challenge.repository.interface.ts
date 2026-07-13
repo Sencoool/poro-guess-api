@@ -5,6 +5,7 @@ import { DailyChallengeEntity, Mode } from '../entities/daily-challenge.entity';
 export interface CreateDailyChallengeInput {
   mode: Mode;
   championsId?: number;
+  imagePath?: string | null;
   matcherChampions?: number[];
 }
 

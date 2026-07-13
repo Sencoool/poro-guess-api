@@ -15,6 +15,8 @@ describe('DeleteInactiveGuestsUseCase', () => {
       update: jest.fn(),
       delete: jest.fn(),
       deleteInactiveGuestUsers: jest.fn(),
+      findByUsername: jest.fn(),
+      findByProviderId: jest.fn(),
     };
     useCase = new DeleteInactiveGuestsUseCase(mockUserRepository);
   });

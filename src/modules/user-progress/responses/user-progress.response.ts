@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { UserDailyProgressEntity } from '../../../core/user-progress/entities/user-progress.entity';
+import { ChampionGuessResult } from '../../../core/user-progress/types';
 
 export class UserProgressResponse {
   @ApiProperty({ example: 1 })
@@ -11,8 +12,8 @@ export class UserProgressResponse {
   @ApiProperty({ example: 1 })
   dailyChallengeId: number;
 
-  @ApiProperty({ example: [1, 5, 10], type: [Number] })
-  guessedChampions: number[];
+  @ApiProperty({ type: [Object] })
+  guesses: ChampionGuessResult[];
 
   @ApiProperty({ example: false })
   isWon: boolean;
@@ -23,20 +24,38 @@ export class UserProgressResponse {
   @ApiProperty({ example: 60, required: false })
   timeElapsed?: number;
 
+  @ApiProperty({ required: false })
+  hint?: string;
+
+  @ApiProperty({ type: [String], required: false })
+  traits?: string[];
+
+  @ApiProperty({ required: false })
+  targetChampionId?: number;
+
   @ApiProperty()
   createdAt: Date;
 
   @ApiProperty()
   updatedAt: Date;
 
-  constructor(entity: UserDailyProgressEntity) {
+  constructor(
+    entity: UserDailyProgressEntity,
+    guesses: ChampionGuessResult[],
+    hint?: string,
+    traits?: string[],
+    targetChampionId?: number
+  ) {
     this.id = entity.id;
     this.userId = entity.userId;
     this.dailyChallengeId = entity.dailyChallengeId;
-    this.guessedChampions = entity.guessedChampions;
+    this.guesses = guesses;
     this.isWon = entity.isWon;
     this.moves = entity.moves;
     this.timeElapsed = entity.timeElapsed;
+    this.hint = hint;
+    this.traits = traits;
+    this.targetChampionId = targetChampionId;
     this.createdAt = entity.createdAt;
     this.updatedAt = entity.updatedAt;
   }

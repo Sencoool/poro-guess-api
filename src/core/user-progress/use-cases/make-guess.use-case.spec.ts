@@ -2,9 +2,11 @@ import { MakeGuessUseCase } from './make-guess.use-case';
 import { IUserProgressRepository } from '../repositories/user-progress.repository.interface';
 import { IDailyChallengeRepository } from '../../daily-challenge/repositories/daily-challenge.repository.interface';
 import { IUserRepository } from '../../user/repositories/user.repository.interface';
+import { IChampionRepository } from '../../champion/repositories/champion.repository.interface';
 import { UserDailyProgressEntity } from '../entities/user-progress.entity';
 import { DailyChallengeEntity, Mode } from '../../daily-challenge/entities/daily-challenge.entity';
 import { UserEntity, Role, Rank } from '../../user/entities/user.entity';
+import { ChampionEntity, ChampionRole, DamageType, Resource, RangeType, Gender } from '../../champion/entities/champion.entity';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 
 describe('MakeGuessUseCase', () => {
@@ -12,6 +14,7 @@ describe('MakeGuessUseCase', () => {
   let mockUserProgressRepository: jest.Mocked<IUserProgressRepository>;
   let mockDailyChallengeRepository: jest.Mocked<IDailyChallengeRepository>;
   let mockUserRepository: jest.Mocked<IUserRepository>;
+  let mockChampionRepository: jest.Mocked<IChampionRepository>;
 
   beforeEach(() => {
     mockUserProgressRepository = {
@@ -24,9 +27,9 @@ describe('MakeGuessUseCase', () => {
       create: jest.fn(),
       findAll: jest.fn(),
       findById: jest.fn(),
+      deleteAll: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
-      deleteAll: jest.fn(),
     };
 
     mockUserRepository = {
@@ -38,12 +41,24 @@ describe('MakeGuessUseCase', () => {
       update: jest.fn(),
       delete: jest.fn(),
       deleteInactiveGuestUsers: jest.fn(),
+      findByUsername: jest.fn(),
+      findByProviderId: jest.fn(),
+    };
+
+    mockChampionRepository = {
+      create: jest.fn(),
+      findAll: jest.fn(),
+      findById: jest.fn(),
+      findByName: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
     };
 
     useCase = new MakeGuessUseCase(
       mockUserProgressRepository,
       mockDailyChallengeRepository,
       mockUserRepository,
+      mockChampionRepository,
     );
   });
 
@@ -56,6 +71,21 @@ describe('MakeGuessUseCase', () => {
     mode: Mode.CLASSIC,
     championsId: 10,
     matcherChampions: [],
+  });
+
+  const mockTargetChampion = new ChampionEntity({
+    id: 10,
+    name: 'Aatrox',
+    gender: Gender.MALE,
+    role: ChampionRole.TOP,
+    damageType: DamageType.PHYSICAL,
+    resource: Resource.MANALESS,
+    rangeType: RangeType.MELEE,
+    yearRelease: 2013,
+    traits: ['Darkin'],
+    iconPath: 'icon.png',
+    splashPath: ['splash.png'],
+    hint: 'A hint',
   });
 
   const mockProgress = new UserDailyProgressEntity({
@@ -92,6 +122,7 @@ describe('MakeGuessUseCase', () => {
 
     it('should throw BadRequestException if user already won the challenge', async () => {
       mockDailyChallengeRepository.findById.mockResolvedValue(mockChallenge);
+      mockChampionRepository.findById.mockResolvedValue(mockTargetChampion);
       const wonProgress = new UserDailyProgressEntity({ ...mockProgress, isWon: true });
       mockUserProgressRepository.findByUserAndChallenge.mockResolvedValue(wonProgress);
 
@@ -100,6 +131,7 @@ describe('MakeGuessUseCase', () => {
 
     it('should throw BadRequestException if champion already guessed', async () => {
       mockDailyChallengeRepository.findById.mockResolvedValue(mockChallenge);
+      mockChampionRepository.findById.mockResolvedValue(mockTargetChampion);
       mockUserProgressRepository.findByUserAndChallenge.mockResolvedValue(mockProgress);
 
       // Guessing 5 again
@@ -108,6 +140,7 @@ describe('MakeGuessUseCase', () => {
 
     it('should update progress correctly on a wrong guess', async () => {
       mockDailyChallengeRepository.findById.mockResolvedValue(mockChallenge);
+      mockChampionRepository.findById.mockResolvedValue(mockTargetChampion);
       mockUserProgressRepository.findByUserAndChallenge.mockResolvedValue(mockProgress);
       mockUserProgressRepository.update.mockResolvedValue(new UserDailyProgressEntity({ ...mockProgress, guessedChampions: [5, 6] }));
 
@@ -125,6 +158,7 @@ describe('MakeGuessUseCase', () => {
 
     it('should update progress correctly and update streak on a correct guess', async () => {
       mockDailyChallengeRepository.findById.mockResolvedValue(mockChallenge);
+      mockChampionRepository.findById.mockResolvedValue(mockTargetChampion);
       mockUserProgressRepository.findByUserAndChallenge.mockResolvedValue(mockProgress);
       mockUserProgressRepository.update.mockResolvedValue(new UserDailyProgressEntity({ ...mockProgress, guessedChampions: [5, 10], isWon: true }));
       mockUserRepository.findById.mockResolvedValue(mockUser);
@@ -138,8 +172,10 @@ describe('MakeGuessUseCase', () => {
         moves: undefined,
         timeElapsed: undefined,
       });
+      // Streak + Score update verification
       expect(mockUserRepository.update).toHaveBeenCalledWith('user-1', expect.objectContaining({
-        streak: 1, // User had 0 streak, so it becomes 1
+        streak: 1,
+        score: expect.any(Number),
       }));
     });
 
@@ -147,9 +183,11 @@ describe('MakeGuessUseCase', () => {
       const matcherChallenge = new DailyChallengeEntity({
         id: 2,
         mode: Mode.MATCHER,
+        championsId: 10,
         matcherChampions: [1,2,3],
       });
       mockDailyChallengeRepository.findById.mockResolvedValue(matcherChallenge);
+      mockChampionRepository.findById.mockResolvedValue(mockTargetChampion);
       mockUserProgressRepository.findByUserAndChallenge.mockResolvedValue(null);
       mockUserProgressRepository.create.mockResolvedValue(new UserDailyProgressEntity({
         id: 2,

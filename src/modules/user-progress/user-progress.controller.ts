@@ -31,8 +31,8 @@ export class UserProgressController {
     @Param('userId') userId: string,
     @Param('dailyChallengeId', ParseIntPipe) dailyChallengeId: number,
   ): Promise<UserProgressResponse> {
-    const progress = await this.getUserProgressUseCase.execute(userId, dailyChallengeId);
-    return new UserProgressResponse(progress);
+    const result = await this.getUserProgressUseCase.execute(userId, dailyChallengeId);
+    return new UserProgressResponse(result.progress, result.guesses, result.hint, result.traits, result.targetChampionId);
   }
 
   @Post(':userId/:dailyChallengeId/guess')
@@ -44,7 +44,7 @@ export class UserProgressController {
     @Param('dailyChallengeId', ParseIntPipe) dailyChallengeId: number,
     @Body() dto: MakeGuessDto,
   ): Promise<UserProgressResponse> {
-    const progress = await this.makeGuessUseCase.execute({
+    const result = await this.makeGuessUseCase.execute({
       userId,
       dailyChallengeId,
       championId: dto.championId,
@@ -52,6 +52,6 @@ export class UserProgressController {
       timeElapsed: dto.timeElapsed,
       isWon: dto.isWon,
     });
-    return new UserProgressResponse(progress);
+    return new UserProgressResponse(result.progress, result.guesses, result.hint, result.traits, result.targetChampionId);
   }
 }

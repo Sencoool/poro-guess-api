@@ -59,12 +59,24 @@ export class RandomizeDailyChallengesUseCase {
         });
         this.logger.log(`Created new challenge for mode ${mode} with 16 matcher champions`);
       } else {
-        const championId = selectedChampions[i].id;
+        const targetChampion = selectedChampions[i];
+        
+        let imagePath: string | null = null;
+        if (mode === Mode.JIGSAW) {
+          // Pick a random splash skin for Jigsaw mode
+          const splashPaths = targetChampion.splashPath || [];
+          if (splashPaths.length > 0) {
+            const randomSkinIndex = Math.floor(Math.random() * splashPaths.length);
+            imagePath = splashPaths[randomSkinIndex];
+          }
+        }
+
         await this.dailyChallengeRepository.create({
           mode,
-          championsId: championId,
+          championsId: targetChampion.id,
+          imagePath: imagePath,
         });
-        this.logger.log(`Created new challenge for mode ${mode} with Champion ID ${championId}`);
+        this.logger.log(`Created new challenge for mode ${mode} with Champion ID ${targetChampion.id}`);
       }
     }
 

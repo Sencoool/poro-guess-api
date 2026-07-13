@@ -21,6 +21,7 @@ export class DailyChallengePrismaRepository implements IDailyChallengeRepository
       id: prismaDailyChallenge.id,
       mode: prismaDailyChallenge.mode as Mode,
       championsId: prismaDailyChallenge.championsId ?? undefined,
+      imagePath: prismaDailyChallenge.imagePath ?? undefined,
       matcherChampions: prismaDailyChallenge.matcherChampions,
     });
   }

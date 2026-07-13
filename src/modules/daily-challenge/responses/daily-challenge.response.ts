@@ -10,8 +10,8 @@ export class DailyChallengeResponse {
   @ApiProperty({ example: 'CLASSIC', enum: Mode })
   mode: Mode;
 
-  @ApiProperty({ example: 1, required: false })
-  championsId?: number;
+  @ApiProperty({ example: 'splash/Aatrox_0.jpg', required: false })
+  imagePath?: string;
 
   @ApiProperty({ example: [1, 2, 3, 4], required: false })
   matcherChampions?: number[];
@@ -19,7 +19,7 @@ export class DailyChallengeResponse {
   constructor(entity: DailyChallengeEntity) {
     this.id = entity.id;
     this.mode = entity.mode;
-    this.championsId = entity.championsId;
+    this.imagePath = entity.imagePath;
     this.matcherChampions = entity.matcherChampions;
   }
 }

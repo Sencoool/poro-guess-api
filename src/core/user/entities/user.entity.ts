@@ -49,4 +49,20 @@ export class UserEntity {
     const { password, toPublic, ...rest } = this;
     return rest;
   }
+
+  /**
+   * Calculate the user's rank based on their total score.
+   */
+  static calculateRank(score: number): Rank {
+    if (score >= 2800) return Rank.CHALLENGER;
+    if (score >= 1800) return Rank.GRANDMASTER;
+    if (score >= 1200) return Rank.MASTER;
+    if (score >= 750) return Rank.DIAMOND;
+    if (score >= 450) return Rank.EMERALD;
+    if (score >= 250) return Rank.PLATINUM;
+    if (score >= 120) return Rank.GOLD;
+    if (score >= 50) return Rank.SILVER;
+    if (score >= 10) return Rank.BRONZE;
+    return Rank.IRON;
+  }
 }

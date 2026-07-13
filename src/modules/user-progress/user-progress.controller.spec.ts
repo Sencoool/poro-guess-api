@@ -53,12 +53,15 @@ describe('UserProgressController', () => {
 
   describe('findOne', () => {
     it('should call getUserProgressUseCase and return progress', async () => {
-      mockGetUserProgressUseCase.execute.mockResolvedValue(mockProgress);
+      mockGetUserProgressUseCase.execute.mockResolvedValue({
+        progress: mockProgress,
+        guesses: [],
+      });
 
       const result = await controller.findOne('user-1', 1);
 
       expect(mockGetUserProgressUseCase.execute).toHaveBeenCalledWith('user-1', 1);
-      expect(result).toEqual(new UserProgressResponse(mockProgress));
+      expect(result).toEqual(new UserProgressResponse(mockProgress, []));
     });
   });
 
@@ -79,7 +82,11 @@ describe('UserProgressController', () => {
         timeElapsed: 100,
       });
 
-      mockMakeGuessUseCase.execute.mockResolvedValue(updatedProgress);
+      mockMakeGuessUseCase.execute.mockResolvedValue({
+        progress: updatedProgress,
+        guesses: [],
+        targetChampionId: 10,
+      });
 
       const result = await controller.makeGuess('user-1', 1, dto);
 
@@ -91,7 +98,7 @@ describe('UserProgressController', () => {
         timeElapsed: 100,
         isWon: true,
       });
-      expect(result).toEqual(new UserProgressResponse(updatedProgress));
+      expect(result).toEqual(new UserProgressResponse(updatedProgress, [], undefined, undefined, 10));
     });
   });
 });

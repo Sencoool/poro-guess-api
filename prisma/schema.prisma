@@ -120,6 +120,7 @@ model DailyChallenge {
   mode         Mode
   championsId  Int?
   champion     Champion?    @relation(fields: [championsId], references: [id])
+  imagePath    String?      // Stores the specific splashPath for Jigsaw mode
   matcherChampions Int[]    @default([])
   dailyGuesses DailyGuess[]
   userDailyProgress UserDailyProgress[]
