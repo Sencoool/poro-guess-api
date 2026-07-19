@@ -17,6 +17,9 @@ export interface UpdateUserCommand {
   username?: string;
   password?: string;
   isActive?: boolean;
+  streak?: number;
+  lastLogin?: Date;
+  iconPath?: string;
 }
 
 @Injectable()
@@ -39,6 +42,9 @@ export class UpdateUserUseCase {
     if (command.password !== undefined) {
       updateData.password = await bcrypt.hash(command.password, 10);
     }
+    if (command.streak !== undefined) updateData.streak = command.streak;
+    if (command.lastLogin !== undefined) updateData.lastLogin = command.lastLogin;
+    if (command.iconPath !== undefined) updateData.iconPath = command.iconPath;
 
     return this.userRepository.update(command.id, updateData);
   }

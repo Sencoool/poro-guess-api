@@ -8,7 +8,7 @@ import {
 import type {
   IUserRepository,
 } from '../repositories/user.repository.interface';
-import { UserEntity } from '../entities/user.entity';
+import { UserEntity, Role, Rank } from '../entities/user.entity';
 
 export interface CreateUserCommand {
   email: string;
@@ -37,6 +37,14 @@ export class CreateUserUseCase {
       email: command.email,
       username: command.username,
       password: hashedPassword,
+      role: Role.USER,
+      isGuest: false,
+      isActive: true,
+      score: 0,
+      rank: Rank.IRON,
+      streak: 0,
+      lastLogin: new Date(),
+      iconPath: 'https://raw.githubusercontent.com/DotA2-Fans/Icons/main/summoners_rift/icons/poro.png',
     });
   }
 }

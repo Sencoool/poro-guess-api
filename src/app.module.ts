@@ -4,12 +4,26 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './infrastructure/prisma/prisma.module';
 import { UserModule } from './modules/user/user.module';
+import { ChampionModule } from './modules/champion/champion.module';
+import { DailyChallengeModule } from './modules/daily-challenge/daily-challenge.module';
+import { DailyGuessModule } from './modules/daily-guess/daily-guess.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { CronModule } from './modules/cron/cron.module';
+import { UserProgressModule } from './modules/user-progress/user-progress.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     PrismaModule,
     UserModule,
+    ChampionModule,
+    DailyChallengeModule,
+    DailyGuessModule,
+    CronModule,
+    UserProgressModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

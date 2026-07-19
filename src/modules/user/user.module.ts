@@ -6,8 +6,12 @@ import { UserController } from './user.controller';
 import { CreateUserUseCase } from '../../core/user/use-cases/create-user.use-case';
 import { FindAllUsersUseCase } from '../../core/user/use-cases/find-all-users.use-case';
 import { FindUserByIdUseCase } from '../../core/user/use-cases/find-user-by-id.use-case';
+import { FindTop500UsersUseCase } from '../../core/user/use-cases/find-top-500-users.use-case';
 import { UpdateUserUseCase } from '../../core/user/use-cases/update-user.use-case';
 import { DeleteUserUseCase } from '../../core/user/use-cases/delete-user.use-case';
+import { DeleteInactiveGuestsUseCase } from '../../core/user/use-cases/delete-inactive-guests.use-case';
+import { ValidateOAuthLoginUseCase } from '../../core/user/use-cases/validate-oauth-login.use-case';
+import { CreateGuestUserUseCase } from '../../core/user/use-cases/create-guest-user.use-case';
 
 import { UserPrismaRepository } from '../../infrastructure/prisma/repositories/user.prisma.repository';
 import { USER_REPOSITORY } from '../../core/user/repositories/user.repository.interface';
@@ -23,9 +27,14 @@ import { USER_REPOSITORY } from '../../core/user/repositories/user.repository.in
     // Use-cases
     CreateUserUseCase,
     FindAllUsersUseCase,
+    FindTop500UsersUseCase,
     FindUserByIdUseCase,
     UpdateUserUseCase,
     DeleteUserUseCase,
+    DeleteInactiveGuestsUseCase,
+    ValidateOAuthLoginUseCase,
+    CreateGuestUserUseCase,
   ],
+  exports: [DeleteInactiveGuestsUseCase, ValidateOAuthLoginUseCase, CreateGuestUserUseCase],
 })
 export class UserModule {}

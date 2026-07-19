@@ -11,6 +11,9 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
+  DefaultValuePipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -23,6 +26,7 @@ import {
 
 import { CreateUserUseCase } from '../../core/user/use-cases/create-user.use-case';
 import { FindAllUsersUseCase } from '../../core/user/use-cases/find-all-users.use-case';
+import { FindTop500UsersUseCase } from '../../core/user/use-cases/find-top-500-users.use-case';
 import { FindUserByIdUseCase } from '../../core/user/use-cases/find-user-by-id.use-case';
 import { UpdateUserUseCase } from '../../core/user/use-cases/update-user.use-case';
 import { DeleteUserUseCase } from '../../core/user/use-cases/delete-user.use-case';
@@ -30,6 +34,7 @@ import { DeleteUserUseCase } from '../../core/user/use-cases/delete-user.use-cas
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponse } from './responses/user.response';
+import { LeaderboardUserResponse } from './responses/leaderboard-user.response';
 
 @ApiTags('Users')
 @Controller('users')
@@ -37,6 +42,7 @@ export class UserController {
   constructor(
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly findAllUsersUseCase: FindAllUsersUseCase,
+    private readonly findTop500UsersUseCase: FindTop500UsersUseCase,
     private readonly findUserByIdUseCase: FindUserByIdUseCase,
     private readonly updateUserUseCase: UpdateUserUseCase,
     private readonly deleteUserUseCase: DeleteUserUseCase,
@@ -53,6 +59,33 @@ export class UserController {
     return new UserResponse(user);
   }
 
+  // ── POST /users/guest ───────────────────────────────────────
+
+  @Post('guest')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Create a new anonymous guest user' })
+  @ApiCreatedResponse({ type: UserResponse, description: 'Guest user created' })
+  async createGuest(): Promise<UserResponse> {
+    // Generate a random guest username
+    const randomId = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+    const guestDto: CreateUserDto = {
+      email: `guest_${randomId}@poroguess.local`,
+      username: `Guest_${randomId}`,
+      password: `GuestPassw0rd!${randomId}`, // Just a strong random password they'll never use
+      role: 'USER' as any,
+      isActive: true,
+      score: 5,
+      rank: 'IRON' as any,
+      streak: 0,
+      lastLogin: new Date(),
+      iconPath: '/img/Red.png'
+    };
+    
+    const user = await this.createUserUseCase.execute(guestDto);
+    // Overwrite the username if needed to append (Guest)
+    return new UserResponse(user);
+  }
+
   // ── GET /users ──────────────────────────────────────────────
 
   @Get()
@@ -61,6 +94,18 @@ export class UserController {
   async findAll(): Promise<UserResponse[]> {
     const users = await this.findAllUsersUseCase.execute();
     return users.map((u) => new UserResponse(u));
+  }
+
+  // ── GET /users/leaderboard ──────────────────────────────────────────
+
+  @Get('leaderboard')
+  @ApiOperation({ summary: 'Retrieve top 500 users leaderboard' })
+  @ApiOkResponse({ type: [LeaderboardUserResponse], description: 'List of top users' })
+  async getLeaderboard(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+  ): Promise<LeaderboardUserResponse[]> {
+    const users = await this.findTop500UsersUseCase.execute(page);
+    return users.map((u) => new LeaderboardUserResponse(u));
   }
 
   // ── GET /users/:id ──────────────────────────────────────────
