@@ -59,6 +59,33 @@ export class UserController {
     return new UserResponse(user);
   }
 
+  // ── POST /users/guest ───────────────────────────────────────
+
+  @Post('guest')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Create a new anonymous guest user' })
+  @ApiCreatedResponse({ type: UserResponse, description: 'Guest user created' })
+  async createGuest(): Promise<UserResponse> {
+    // Generate a random guest username
+    const randomId = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+    const guestDto: CreateUserDto = {
+      email: `guest_${randomId}@poroguess.local`,
+      username: `Guest_${randomId}`,
+      password: `GuestPassw0rd!${randomId}`, // Just a strong random password they'll never use
+      role: 'USER' as any,
+      isActive: true,
+      score: 5,
+      rank: 'IRON' as any,
+      streak: 0,
+      lastLogin: new Date(),
+      iconPath: '/img/Red.png'
+    };
+    
+    const user = await this.createUserUseCase.execute(guestDto);
+    // Overwrite the username if needed to append (Guest)
+    return new UserResponse(user);
+  }
+
   // ── GET /users ──────────────────────────────────────────────
 
   @Get()

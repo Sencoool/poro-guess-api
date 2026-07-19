@@ -12,6 +12,7 @@ export class DailyChallengeEntity {
   mode: Mode;
   championsId?: number;
   imagePath?: string;
+  traits?: string[];
   matcherChampions: number[];
 
   constructor(partial: Partial<DailyChallengeEntity>) {

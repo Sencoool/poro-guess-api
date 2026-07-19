@@ -63,11 +63,10 @@ export class GetUserProgressUseCase {
       hint = targetChampion.hint;
     }
 
-    // Traits mode logic: unlock hints based on guesses
+    // Traits mode logic: send all 5 traits to frontend so it can manage reveals (Client-Side State)
     let traits: string[] | undefined = undefined;
     if (challenge.mode === 'TRAITS' && targetChampion) {
-      const hintsToReveal = progress.isWon ? 5 : Math.min(5, progress.guessedChampions.length + 1);
-      traits = targetChampion.traits.slice(0, hintsToReveal);
+      traits = targetChampion.traits.slice(0, 5);
     }
 
     return {

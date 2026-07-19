@@ -21,4 +21,9 @@ export class MakeGuessDto {
   @IsOptional()
   @IsBoolean()
   isWon?: boolean;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber()
+  score?: number;
 }

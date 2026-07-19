@@ -3,6 +3,7 @@ import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { AllExceptionsFilter } from './all-exceptions.filter';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { configure as serverlessExpress } from '@codegenie/serverless-express';
 import { Handler, Context, Callback } from 'aws-lambda';
@@ -24,7 +25,7 @@ async function createApp() {
   );
 
   // ── Global Filters ────────────────────────────────────────────
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter(), new AllExceptionsFilter());
 
   // ── Global Interceptors ───────────────────────────────────────
   app.useGlobalInterceptors(

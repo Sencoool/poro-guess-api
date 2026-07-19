@@ -51,7 +51,8 @@ export class UserProgressController {
       moves: dto.moves,
       timeElapsed: dto.timeElapsed,
       isWon: dto.isWon,
+      score: dto.score,
     });
-    return new UserProgressResponse(result.progress, result.guesses, result.hint, result.traits, result.targetChampionId);
+    return new UserProgressResponse(result.progress, result.guesses, result.hint, result.traits, result.targetChampionId, result.stats);
   }
 }

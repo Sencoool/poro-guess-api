@@ -16,12 +16,13 @@ export class DailyChallengePrismaRepository implements IDailyChallengeRepository
 
   // ── Mapping ─────────────────────────────────────────────────
 
-  private toEntity(prismaDailyChallenge: PrismaDailyChallenge): DailyChallengeEntity {
+  private toEntity(prismaDailyChallenge: any): DailyChallengeEntity {
     return new DailyChallengeEntity({
       id: prismaDailyChallenge.id,
       mode: prismaDailyChallenge.mode as Mode,
       championsId: prismaDailyChallenge.championsId ?? undefined,
       imagePath: prismaDailyChallenge.imagePath ?? undefined,
+      traits: prismaDailyChallenge.champion?.traits ?? undefined,
       matcherChampions: prismaDailyChallenge.matcherChampions,
     });
   }
@@ -36,12 +37,16 @@ export class DailyChallengePrismaRepository implements IDailyChallengeRepository
   async findAll(): Promise<DailyChallengeEntity[]> {
     const dailyChallenges = await this.prisma.client.dailyChallenge.findMany({
       orderBy: { id: 'desc' },
+      include: { champion: { select: { traits: true } } },
     });
     return dailyChallenges.map((c) => this.toEntity(c));
   }
 
   async findById(id: number): Promise<DailyChallengeEntity | null> {
-    const dailyChallenge = await this.prisma.client.dailyChallenge.findUnique({ where: { id } });
+    const dailyChallenge = await this.prisma.client.dailyChallenge.findUnique({
+      where: { id },
+      include: { champion: { select: { traits: true } } },
+    });
     return dailyChallenge ? this.toEntity(dailyChallenge) : null;
   }
 

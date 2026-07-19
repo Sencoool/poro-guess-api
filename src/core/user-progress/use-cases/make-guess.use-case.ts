@@ -19,6 +19,7 @@ export interface MakeGuessCommand {
   moves?: number;
   timeElapsed?: number;
   isWon?: boolean;
+  score?: number;
 }
 
 export interface MakeGuessResult {
@@ -27,6 +28,15 @@ export interface MakeGuessResult {
   hint?: string;
   traits?: string[];
   targetChampionId?: number;
+  stats?: {
+    scoreGained: number;
+    oldRank: string;
+    newRank: string;
+    oldStreak: number;
+    newStreak: number;
+    oldScore: number;
+    newScore: number;
+  };
 }
 
 @Injectable()
@@ -43,7 +53,11 @@ export class MakeGuessUseCase {
   ) {}
 
   async execute(command: MakeGuessCommand): Promise<MakeGuessResult> {
-    const { userId, dailyChallengeId, championId, moves, timeElapsed, isWon } = command;
+    const { userId, dailyChallengeId, championId, moves, timeElapsed, isWon, score } = command;
+
+    console.log('--- MAKE GUESS DEBUG ---');
+    console.log('command:', command);
+    console.log('dailyChallengeId type:', typeof dailyChallengeId, dailyChallengeId);
 
     const challenge = await this.dailyChallengeRepository.findById(dailyChallengeId);
     if (!challenge) {
@@ -100,8 +114,17 @@ export class MakeGuessUseCase {
       timeElapsed,
     });
 
+    let statsResult: any = undefined;
     if (isCorrect) {
-      await this.updateStreakAndScore(userId, updatedGuessedChampions.length);
+      let scoreGain = 0;
+      if (score !== undefined) {
+        scoreGain = score;
+      } else if (challenge.mode === 'CLASSIC') {
+        scoreGain = Math.max(1, 5 - (updatedGuessedChampions.length - 1));
+      } else {
+        scoreGain = 1; // Fallback
+      }
+      statsResult = await this.updateStreakAndScore(userId, scoreGain);
     }
 
     // Build the guess history with comparisons
@@ -137,10 +160,11 @@ export class MakeGuessUseCase {
       hint,
       traits,
       targetChampionId: isCorrect && targetChampion ? targetChampion.id : undefined,
+      stats: statsResult,
     };
   }
 
-  private async updateStreakAndScore(userId: string, guessCount: number) {
+  private async updateStreakAndScore(userId: string, scoreGain: number) {
     const user = await this.userRepository.findById(userId);
     if (!user) return;
     
@@ -166,13 +190,10 @@ export class MakeGuessUseCase {
       newStreak = 1;
     }
 
-    // Score logic: 5 points max, deduct 1 per wrong guess, min 1 point
-    const scoreGain = Math.max(1, 5 - (guessCount - 1));
+    // Dynamic import to avoid circular dependency
     const newScore = user.score + scoreGain;
-    
-    // Dynamic import to avoid circular dependency, or just import at top. Let's assume we can calculate rank inline if needed.
-    // Actually, we can just require or import the UserEntity here.
     const { UserEntity } = require('../../user/entities/user.entity');
+    const oldRank = UserEntity.calculateRank(user.score);
     const newRank = UserEntity.calculateRank(newScore);
 
     await this.userRepository.update(userId, {
@@ -181,5 +202,15 @@ export class MakeGuessUseCase {
       rank: newRank,
       lastPlayedAt: new Date(),
     });
+
+    return {
+      scoreGained: scoreGain,
+      oldRank: oldRank,
+      newRank: newRank,
+      oldStreak: user.streak,
+      newStreak: newStreak,
+      oldScore: user.score,
+      newScore: newScore,
+    };
   }
 }

@@ -27,8 +27,20 @@ export class UserResponse {
   isActive: boolean;
 
   @Expose()
+  @ApiProperty({ example: 120 })
+  score: number;
+
+  @Expose()
+  @ApiProperty({ example: 'GOLD' })
+  rank: string;
+
+  @Expose()
   @ApiProperty({ example: 5 })
   streak: number;
+
+  @Expose()
+  @ApiProperty({ example: true })
+  isGuest: boolean;
 
   @Expose()
   @ApiProperty({ example: '2024-01-01T00:00:00.000Z' })

@@ -50,6 +50,62 @@ async function main() {
   }
 
   console.log('Seeding finished successfully.');
+
+  // Create daily challenges if they don't exist
+  const existingClassic = await prisma.dailyChallenge.findFirst({ where: { mode: 'CLASSIC' } });
+  if (!existingClassic) {
+    console.log('Creating initial CLASSIC daily challenge...');
+    const randomChamp = await prisma.champion.findFirst();
+    if (randomChamp) {
+      await prisma.dailyChallenge.create({
+        data: {
+          mode: 'CLASSIC',
+          championsId: randomChamp.id,
+        }
+      });
+      console.log('CLASSIC daily challenge created!');
+    }
+  }
+
+  // Create JIGSAW challenge
+  console.log('Cleaning up existing JIGSAW challenge...');
+  await prisma.dailyChallenge.deleteMany({ where: { mode: 'JIGSAW' } });
+  
+  console.log('Creating initial JIGSAW daily challenge...');
+  // get all champions to pick a random one
+  const allChamps = await prisma.champion.findMany();
+  if (allChamps.length > 0) {
+    const randomChamp = allChamps[Math.floor(Math.random() * allChamps.length)];
+    // select a random splash art
+    if (randomChamp.splashPath.length > 0) {
+      const randomSplash = randomChamp.splashPath[Math.floor(Math.random() * randomChamp.splashPath.length)];
+      await prisma.dailyChallenge.create({
+        data: {
+          mode: 'JIGSAW',
+          championsId: randomChamp.id,
+          imagePath: randomSplash,
+        }
+      });
+      console.log('JIGSAW daily challenge created!');
+    } else {
+      console.log('No valid splash paths found for ' + randomChamp.name);
+    }
+  }
+  // Create TRAITS challenge
+  console.log('Cleaning up existing TRAITS challenge...');
+  await prisma.dailyChallenge.deleteMany({ where: { mode: 'TRAITS' } });
+  
+  console.log('Creating initial TRAITS daily challenge...');
+  if (allChamps.length > 0) {
+    const randomChamp = allChamps[Math.floor(Math.random() * allChamps.length)];
+    await prisma.dailyChallenge.create({
+      data: {
+        mode: 'TRAITS',
+        championsId: randomChamp.id,
+      }
+    });
+    console.log('TRAITS daily challenge created!');
+  }
 }
 
 main()

@@ -33,6 +33,27 @@ export class UserProgressResponse {
   @ApiProperty({ required: false })
   targetChampionId?: number;
 
+  @ApiProperty({ required: false })
+  scoreGained?: number;
+
+  @ApiProperty({ required: false })
+  oldRank?: string;
+
+  @ApiProperty({ required: false })
+  newRank?: string;
+
+  @ApiProperty({ required: false })
+  oldStreak?: number;
+
+  @ApiProperty({ required: false })
+  newStreak?: number;
+
+  @ApiProperty({ required: false })
+  oldScore?: number;
+
+  @ApiProperty({ required: false })
+  newScore?: number;
+
   @ApiProperty()
   createdAt: Date;
 
@@ -44,7 +65,16 @@ export class UserProgressResponse {
     guesses: ChampionGuessResult[],
     hint?: string,
     traits?: string[],
-    targetChampionId?: number
+    targetChampionId?: number,
+    stats?: {
+      scoreGained?: number;
+      oldRank?: string;
+      newRank?: string;
+      oldStreak?: number;
+      newStreak?: number;
+      oldScore?: number;
+      newScore?: number;
+    }
   ) {
     this.id = entity.id;
     this.userId = entity.userId;
@@ -58,5 +88,15 @@ export class UserProgressResponse {
     this.targetChampionId = targetChampionId;
     this.createdAt = entity.createdAt;
     this.updatedAt = entity.updatedAt;
+    
+    if (stats) {
+      this.scoreGained = stats.scoreGained;
+      this.oldRank = stats.oldRank;
+      this.newRank = stats.newRank;
+      this.oldStreak = stats.oldStreak;
+      this.newStreak = stats.newStreak;
+      this.oldScore = stats.oldScore;
+      this.newScore = stats.newScore;
+    }
   }
 }

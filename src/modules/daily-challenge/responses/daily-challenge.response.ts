@@ -16,10 +16,14 @@ export class DailyChallengeResponse {
   @ApiProperty({ example: [1, 2, 3, 4], required: false })
   matcherChampions?: number[];
 
+  @ApiProperty({ example: ['Ranged', 'Fighter', 'Top', 'Mana', 'Ionia'], required: false })
+  traits?: string[];
+
   constructor(entity: DailyChallengeEntity) {
     this.id = entity.id;
     this.mode = entity.mode;
     this.imagePath = entity.imagePath;
     this.matcherChampions = entity.matcherChampions;
+    this.traits = entity.traits;
   }
 }
